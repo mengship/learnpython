@@ -11,20 +11,19 @@ from flash.zidshw.udyijm import searchMoveClick, dataExport
 
 # 编号5 积压单昨日取消
 if __name__ == '__main__':
-    lOrR = 'left'
     pic_path = '/Users/flash/PycharmProjects/learnpython/flash/zidshw'
-    reTry = 1
-    startDay='2024-03-01'
+    startDay='2024-06-10'
     today = datetime.date.today()
-    todayadd10 = (today + datetime.timedelta(days=10)).strftime("%Y-%m-%d")
-    print(todayadd10)
+    # todayadd10 = (today + datetime.timedelta(days=10)).strftime("%Y-%m-%d")
+    # print(todayadd10)
     title = 'Backlogabolish'
-    concont = str(today) + title
+    version = 'l'
+    concont = str(today) + title + version
 
     mouse = c_mouse()
 
-    while startDay <= str(today):
-        startDayAdd45 = (pd.Timestamp(startDay) + datetime.timedelta(days=10)).strftime("%Y-%m-%d")
+    while startDay < str(today):
+        startDayAdd45 = (pd.Timestamp(startDay) + datetime.timedelta(days=5)).strftime("%Y-%m-%d")
         name = concont + startDay + '~' + startDayAdd45 + '3'
 
         # 找到【库内】
@@ -104,7 +103,7 @@ if __name__ == '__main__':
     DataSatisfyConditions = 0
     for file in csv_files:
         # 循环读取csv文件
-        df = pd.read_csv(os.path.join(csv_directory, file) ,low_memory=False)
+        df = pd.read_csv(os.path.join(csv_directory, file) , low_memory=False,sep=',', on_bad_lines='skip')# ,encoding = "utf-8"
         # 假设我们要筛选列名为'Column_Name'的列，条件是值大于某个值
         # condition = df['Last modified time'] > '2024-04-29'
         df['Last modified time'] = pd.to_datetime(df['Last modified time'])
@@ -119,12 +118,12 @@ if __name__ == '__main__':
         DataSatisfyConditions += len(filtered_df)
 
 
-    print(DataSatisfyConditions)
+    print('昨日取消的： '+str(DataSatisfyConditions))
 
     DataCreateConditions = 0
     for file in csv_files:
         # 循环读取csv文件
-        df = pd.read_csv(os.path.join(csv_directory, file) ,low_memory=False)
+        df = pd.read_csv(os.path.join(csv_directory, file) , encoding = "utf-8", low_memory=False)
         # 假设我们要筛选列名为'Column_Name'的列，条件是值大于某个值
         # condition = df['Last modified time'] > '2024-04-29'
         df['Creation time'] = pd.to_datetime(df['Creation time'])
@@ -140,4 +139,4 @@ if __name__ == '__main__':
         print("满足条件的行数：", len(filtered_df))
         DataCreateConditions += len(filtered_df)
 
-    print(DataCreateConditions)
+    print('昨日取消且昨日增加： '+str(DataCreateConditions))

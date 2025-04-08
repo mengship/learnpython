@@ -1,30 +1,54 @@
-from datetime import datetime
+import datetime
 import os
 import pandas as pd
-# 库存转移
+# 拣货数据KPI
 # 指定包含CSV文件的目录
-csv_directory = '/Users/flash/OneDrive/闪电快车/LCP/0419-3-拣货'
+csv_directory = '/Users/flash/LCP仓储/临时目录/拣货KPI'
+out_directory = '/Users/flash/LCP仓储/临时目录/拣货KPI'
 columns_to_extract2 =['Create Time', 'Business Order No.', 'Status',  'Business Doc. Type', 'Plan Quantity', 'Actual Quantity']
 # 获取所有CSV文件
-csv_files = [file for file in os.listdir(csv_directory) if file.endswith('.csv')]
+today = datetime.date.today()
+todaydiminish1 = (today + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
+# name = str(today)+ 'jmho'
+name = '拣货0507'
+csv_files = [file for file in os.listdir(csv_directory) if file.endswith('.csv') and file.startswith(str(name)) ]
+print(csv_files)
+
+file_paths = [os.path.join(csv_directory, file) for file in csv_files]
+print(file_paths)
+
+# 遍历所有文件
+for file_path in file_paths:
+    # 读取文件内容
+    with open(file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    # 过滤掉 "\," 特殊字符
+    filtered_content = content.replace('\\,', '')
+
+    # 将过滤后的内容写回文件
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(filtered_content)
+
+print("将excel中的 \, 替换掉，所有文件处理完成。")
+
 
 # 读取所有CSV文件并去除列名中的'.'，同时去除数据中的'`'字符
 dfs = []
 for file in csv_files:
-    df = pd.read_csv(os.path.join(csv_directory, file) ,usecols=columns_to_extract2)
+    df = pd.read_csv(os.path.join(csv_directory, file) ) # ,usecols=columns_to_extract2
     # 去除列名中的'.'
     df.columns = [col.replace('.', '') for col in df.columns]
+    df.columns = [col.replace(':', '') for col in df.columns]
     # 去除数据中的'`'字符
-    df = df.applymap(lambda x: str(x).replace('`', '') if isinstance(x, str) else x)
-    # 增加当日日期列
-    today = datetime.now().strftime('%Y-%m-%d')
-    df['today_date'] = today
+    df = df.map(lambda x: str(x).replace('`', '') if isinstance(x, str) else x)
+    df['today_date'] = todaydiminish1
     dfs.append(df)
 
 # 拼接所有DataFrame
 combined_df = pd.concat(dfs, ignore_index=True)
 
 # 写入到XLSX文件
-combined_df.to_excel('/Users/flash/OneDrive/闪电快车/LCP/0419-3-拣货/tmp_th_combined_picked_data.xlsx', index=False)
-
+# combined_df.to_excel('/Users/flash/OneDrive/闪电快车/LCP/0422-3-拣货/tmp_th_combined_picked_data.xlsx', index=False)
+combined_df.to_excel(os.path.join(out_directory,'tmp_th_combined_pickedKPI_data.xlsx'), index=False)
 print("所有CSV文件已拼接并写入到'combined_data.xlsx'，列名中的'.'已被替换为''，数据中的'`'字符已被去除。")

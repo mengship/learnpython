@@ -8,25 +8,27 @@ import xlrd
 import pyperclip
 from flash.zidshw.udyijm import searchMoveClick, dataExport
 from pynput.mouse import Button, Controller as c_mouse
+
+
 # 编号1 收货
-if __name__ == '__main__':
+def main():
     pic_path = '/Users/flash/PycharmProjects/learnpython/flash/zidshw'
     today = datetime.date.today()
     todayadd1 = (today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
     title = 'consignees'
-    concont = str(today) + title
+    version = '1'
+    concont = str(today) + title +version
     arrivalStart = '2023-01-01'
     arrivalEnd = str(todayadd1)
     notificationStart = '2023-12-01'
     # notificationEnd = str((today + datetime.timedelta(days=45)).strftime("%Y-%m-%d"))
     mouse = c_mouse()
-    while notificationStart <= str(today):
+    while notificationStart < str(today):
         # notificationEnd:
         startDayAdd45 = (pd.Timestamp(notificationStart) + datetime.timedelta(days=45)).strftime("%Y-%m-%d")
 
-        plannerName = str(today)+ 'plan order export' + startDayAdd45 + '3'
-        plannerDetailName = str(today)+'plan order detail export' + startDayAdd45+'3'
-
+        plannerName = str(today) + 'plan order export' + startDayAdd45 + '4'
+        plannerDetailName = str(today) + 'plan order detail export' + startDayAdd45 + '4'
 
         # 找到【入库】菜单
         img = os.path.join(pic_path, '7-入库.png')
@@ -80,7 +82,7 @@ if __name__ == '__main__':
         searchMoveClick(img, 0, 40, 1)
 
         mouse.click(Button.left, 3)
-        pyautogui.typewrite(plannerName , interval=0.1)
+        pyautogui.typewrite(plannerName, interval=0.1)
 
         # 找到【确认】按钮
         img = os.path.join(pic_path, '7-确认.png')
@@ -119,15 +121,14 @@ if __name__ == '__main__':
 
         time.sleep(3)
 
-        dataExport(pic_path, plannerDetailName )
-
+        dataExport(pic_path, plannerDetailName)
 
         notificationStart = startDayAdd45
-
 
         time.sleep(10)
         # 指定包含CSV文件的目录
     csv_directory = '/Users/flash/LCP仓储/choice'
+    out_directory = '/Users/flash/LCP仓储/choice/上传数据'
     # 获取所有CSV文件
     today = datetime.date.today()
     name = str(today) + 'plan order export'
@@ -150,7 +151,7 @@ if __name__ == '__main__':
     combined_df = pd.concat(dfs, ignore_index=True)
 
     # 写入到XLSX文件
-    combined_df.to_excel(os.path.join(csv_directory, 'tmp_th_combined_noreceipt_data0322.xlsx'), index=False)
+    combined_df.to_excel(os.path.join(out_directory, 'tmp_th_combined_noreceipt_data0322.xlsx'), index=False)
 
     print("所有CSV文件已拼接并写入到'tmp_th_combined_noreceipt_data0322.xlsx'，列名中的'.'已被替换为''，数据中的'`'字符已被去除。")
 
@@ -178,14 +179,10 @@ if __name__ == '__main__':
     combined_df = pd.concat(dfs, ignore_index=True)
 
     # 写入到XLSX文件
-    combined_df.to_excel(os.path.join(csv_directory, 'tmp_th_combined_noreceiptdetail_data0322.xlsx'), index=False)
+    combined_df.to_excel(os.path.join(out_directory, 'tmp_th_combined_noreceiptdetail_data0322.xlsx'), index=False)
 
     print("所有CSV文件已拼接并写入到'tmp_th_combined_noreceiptdetail_data0322.xlsx'，列名中的'.'已被替换为''，数据中的'`'字符已被去除。")
 
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    main()

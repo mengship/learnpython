@@ -7,14 +7,15 @@ import time
 import xlrd
 import pyperclip
 from flash.zidshw.udyijm import searchMoveClick, dataExport
+
+
 # 编号3 货主货位商品 正品
-if __name__ == '__main__':
-    # lOrR = 'left'
+def main():
     pic_path = '/Users/flash/PycharmProjects/learnpython/flash/zidshw'
-    # reTry = 1
     today = datetime.date.today()
     title = 'kuwzkucpuhpn'
-    concont = str(today) + title
+    version = '7'
+    concont = str(today) + title + version
 
     # 找到【台账】菜单
     img = os.path.join(pic_path, 'tlvh.png')
@@ -24,7 +25,7 @@ if __name__ == '__main__':
     img = os.path.join(pic_path, 'hovuhowzuhpn.png')
     searchMoveClick(img, 0, 0, 1)
 
-    pyautogui.moveTo(10 , 10)
+    pyautogui.moveTo(10, 10)
 
     time.sleep(3)
 
@@ -60,21 +61,22 @@ if __name__ == '__main__':
     time.sleep(6)
 
     csv_directory = '/Users/flash/LCP仓储/choice'
+    out_directory = '/Users/flash/LCP仓储/choice/上传数据'
     # columns_to_extract2 = ['Source LBX', 'Exception Type', 'Source Type', 'Created time']
     resultName = 'tmp_th_kuwzkucpuhpn.xlsx'
     name = concont
     # 获取所有CSV文件
     csv_files = [file for file in os.listdir(csv_directory) if file.endswith('.csv') and file.startswith(str(name))]
-    print('csv_files'+str(csv_files))
+    print('csv_files' + str(csv_files))
 
     file_paths = [os.path.join(csv_directory, file) for file in csv_files]
-    print('file_paths'+str(file_paths))
+    print('file_paths' + str(file_paths))
 
     # 将文件中的 \, 字符去掉
 
     # 尝试使用不同的编码读取文件
     encodings = ['utf-8', 'gbk', 'utf-16', 'utf-16le', 'utf-16be', 'latin1']
-
+    #
     # 遍历所有文件
     for file_path in file_paths:
         # 读取文件内容
@@ -91,16 +93,16 @@ if __name__ == '__main__':
     print("将excel中的 \, 替换掉，所有文件处理完成。")
 
     # 需要等待10s钟，不能立马去读，会出错
-    time.sleep(30)
+    time.sleep(90)
     # 将商品货主货位的excel，取出需要的字段
     # 读取所有CSV文件并去除列名中的'.'，同时去除数据中的'`'字符
     dfs = []
     for file in csv_files:
-        print('file'+file)
+        print('file' + file)
         # 读取文件内容
         for encoding in encodings:
             try:
-                df = pd.read_csv(os.path.join(csv_directory, file), encoding=encoding)
+                df = pd.read_csv(os.path.join(csv_directory, file), encoding=encoding, sep=',', on_bad_lines='skip')
                 # 获取列名列表
                 column_names = df.columns.tolist()
                 # 导出时，列名有的时候会出错zone Zone，这里强制转成我们需要的列名
@@ -117,20 +119,19 @@ if __name__ == '__main__':
                 df['today_date'] = today
                 dfs.append(df)
                 # print(dfs)
+                print('使用的编码为：' + encoding)
                 break
             except UnicodeDecodeError:
                 print(f"Failed with encoding: {encoding}")
-
 
     # print('out dfs'+str(dfs))
     # 拼接所有DataFrame
     combined_df = pd.concat(dfs, ignore_index=True)
 
     # 写入到XLSX文件
-    combined_df.to_excel(os.path.join(csv_directory, resultName), index=False)
+    combined_df.to_excel(os.path.join(out_directory, resultName), index=False)
     print("所有CSV文件已拼接并写入到'combined_data.xlsx'，列名中的'.'已被替换为''，数据中的'`'字符已被去除。")
 
 
-
-
-
+if __name__ == '__main__':
+    main()

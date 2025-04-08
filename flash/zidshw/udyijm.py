@@ -75,8 +75,6 @@ def dataExport(pic_path, name):
             time.sleep(1)
             print("未找到匹配图片,1秒后重试" + 'no_data.png')
 
-
-
     time.sleep(2)
 
     pyautogui.typewrite(name, interval=0.1)
@@ -91,15 +89,14 @@ def dataExport(pic_path, name):
     img = os.path.join(pic_path, 'save.png')
     searchMoveClick(img, 0, 0, 1)
 
-if __name__ == '__main__':
-    lOrR = 'left'
+
+def main():
     pic_path = '/Users/flash/PycharmProjects/learnpython/flash/zidshw'
-    reTry = 1
     today = datetime.date.today()
     todaydiminish1 = (today + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
     title = 'udyijm'
-    concont = str(today) + title
-
+    version = '14'
+    concont = str(today) + title + version
 
     mouse = c_mouse()
 
@@ -182,10 +179,10 @@ if __name__ == '__main__':
     # ############################################################# 导出文件
     dataExport(pic_path, concont)
 
-
     csv_directory = '/Users/flash/LCP仓储/choice'
+    out_directory = '/Users/flash/LCP仓储/choice/上传数据'
     columns_to_extract2 = ['Source LBX', 'Exception Type', 'Source Type', 'Created time']
-    resultName='tmp_th_udyijm.xlsx'
+    resultName = 'tmp_th_udyijm.xlsx'
     name = concont
     # 获取所有CSV文件
     csv_files = [file for file in os.listdir(csv_directory) if file.endswith('.csv') and file.startswith(str(name))]
@@ -227,8 +224,9 @@ if __name__ == '__main__':
 
     # 写入到XLSX文件
     # combined_df.to_excel('/Users/flash/OneDrive/闪电快车/LCP/0422-3-拣货/tmp_th_combined_picked_data.xlsx', index=False)
-    combined_df.to_excel(os.path.join(csv_directory, resultName), index=False)
+    combined_df.to_excel(os.path.join(out_directory, resultName), index=False)
     print("所有CSV文件已拼接并写入到'combined_data.xlsx'，列名中的'.'已被替换为''，数据中的'`'字符已被去除。")
 
 
-
+if __name__ == '__main__':
+    main()

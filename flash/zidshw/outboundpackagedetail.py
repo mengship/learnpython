@@ -65,7 +65,7 @@ if __name__ == '__main__':
         pyautogui.move(140, 0)
 
         mouse.click(Button.left, 2)
-        # 输入 23 点
+        # 输入 小时 点
         pyautogui.typewrite(startHour[i-1], interval=0.1)
 
         # 找到第二个日期输入框
@@ -79,7 +79,7 @@ if __name__ == '__main__':
         pyautogui.move(140, 0)
 
         mouse.click(Button.left, 2)
-        # 输入 23 点
+        # 输入 小时 点
         pyautogui.typewrite(endHour[i-1], interval=0.1)
 
 
@@ -111,11 +111,12 @@ if __name__ == '__main__':
         dataExport(pic_path, str(todaydiminish1)+title+str(version)+str(i))
         time.sleep(3)
 
-    time.sleep(15)
+    time.sleep(60)
 
     # 将三个文档合并到一起，输出到excel中
     # 指定包含CSV文件的目录
     csv_directory = '/Users/flash/LCP仓储/choice'
+    out_directory = '/Users/flash/LCP仓储/choice/上传数据'
     today = datetime.date.today()
     todaydiminish1 = (today + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
     name = str(todaydiminish1) + 'outboundpackagedetail'
@@ -145,5 +146,43 @@ if __name__ == '__main__':
     combined_df = pd.concat(dfs, ignore_index=True)
 
     # 写入到XLSX文件
-    combined_df.to_excel(os.path.join(csv_directory, 'tmp_th_combined_parcel_detail.xlsx'), index=False)
+    combined_df.to_excel(os.path.join(out_directory, 'tmp_th_combined_parcel_detail.xlsx'), index=False)
 
+
+
+    # 核对 csv文件的条数 与 excel文件的条数是不是一样的
+    sum_num = 0
+    # 读取所有CSV文件
+    for fileName in csv_files:
+        # 打开CSV文件
+        with open(os.path.join(csv_directory, fileName), mode='r', encoding='utf-8') as file:
+            # 创建CSV阅读器
+            csv_reader = csv.reader(file)
+            row_count = 0
+            # 遍历文件中的每一行
+            for row in csv_reader:
+                row_count += 1
+
+            # csv文件减掉表头那一行数据
+            row_count = row_count - 1
+            sum_num += row_count
+            print('fileName:' + fileName + 'fileNameNum:' + str(row_count))
+
+    # Excel文件路径
+    xlsx_file_name = 'tmp_th_combined_parcel_detail.xlsx'
+    # 读取Excel文件
+    df = pd.read_excel(os.path.join(out_directory, xlsx_file_name))
+    # 获取行数
+    xlsx_row_count = df.shape[0]
+    # 输出行数
+    print('xlsx name:' + os.path.join(out_directory, xlsx_file_name))
+    print(f'Excel文件有 {xlsx_row_count} 行数据。')
+
+    print(sum_num)
+    print(xlsx_row_count)
+
+    # excel要减掉第一行的表头
+    if sum_num == xlsx_row_count:
+        print('CSV文件的数据条数与xlxs文件的数据条数相同')
+    else:
+        print('CSV文件的数据条数与xlxs文件的数据条数不相同')

@@ -5,12 +5,15 @@ import time
 import xlrd
 import pyperclip
 from flash.zidshw.udyijm import searchMoveClick, dataExport
+
+
 # 编号6 货主货位商品 少货待找回
-if __name__ == '__main__':
+def main():
     pic_path = '/Users/flash/PycharmProjects/learnpython/flash/zidshw'
     today = datetime.date.today()
     title = 'missinggoodsrecovered'
-    concont = str(today) + title
+    version = '2'
+    concont = str(today) + title + version
 
     # 找到【台账】菜单
     img = os.path.join(pic_path, 'tlvh.png')
@@ -54,7 +57,7 @@ if __name__ == '__main__':
     img = os.path.join(pic_path, '3-rfwumyig.png')
     searchMoveClick(img, 0, 50, 1)
 
-    pyautogui.typewrite(concont ,interval=0.1)
+    pyautogui.typewrite(concont, interval=0.1)
 
     # 找到【确定】按钮
     img = os.path.join(pic_path, '3-qtdy.png')
@@ -63,3 +66,6 @@ if __name__ == '__main__':
     # 导出数据
     dataExport(pic_path, concont)
 
+
+if __name__ == '__main__':
+    main()
